@@ -1,0 +1,7 @@
+resource_group_name = "rg-sql-mroczware"
+location            = "northeurope"
+sql_server_name     = "sqlservermroczware"
+admin_login         = "sqlmroczwareadmin"
+admin_password      = "<strong-password>"
+database_name       = "MroczwareDatabase"
+my_ip               = "<your-public-ip>"

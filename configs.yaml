@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  RabbitMq__Host: rabbitmq
+  RabbitMq__Username: guest
+  RabbitMq__Password: guest
+  JWT__Issuer: Identity.Api
+  JWT__Audience: Gateway.Api
+  File__SaveFilePath: /app/files
+  JWT__PublicKeyPem: |
+    MIIBCgKCAQEAvTBp/vpeJEhOBjJ+kaxWDe+Va1FLywCALqKRPWC6C6lwPV4mjNOsQ5kCr6aY+TLVXGJq55I6xgNQqSHHns/KzT/XbY9ZI7/jwxVwR9CScjeDxEeJxE8cp9gzZqevRTwkSAwP2Kw0+J6SaCDq0eyZUFpVf0ufGI4dkrLO9IjKPRmEgR6yaUgdNA4KaiEQfb4FyUxMRZJnxIXtxr0jQ8+a/KV4eEZrbbab7TT32CRsIqLyTeMeGqngIM9O+6kuWzclw8qDbsxuv5E0iPe/8XONf2xoEUrKGsSwqPpbIvgpbi3cw7V+/kO5d/uuBm/lWUWQJmpJZPmarXFM0A9y+pGTxQIDAQAB

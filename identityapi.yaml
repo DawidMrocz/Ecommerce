@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: identityapi-deployment
+  labels:
+    app: identityapi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: identityapi
+  template:
+    metadata:
+      labels:
+        app: identityapi
+    spec:
+      imagePullSecrets:
+        - name: dockerhub-secret
+      containers:
+      - name: identityapi
+        image: dawid064/identityapi:latest
+        ports:
+        - containerPort: 3000
+        envFrom:
+          - secretRef:
+              name: app-secrets
+          - configMapRef:
+              name: app-config
+        volumeMounts:
+          - name: files-volume
+            mountPath: /app/files
+      volumes:
+        - name: files-volume
+          persistentVolumeClaim:
+            claimName: identityapi-files-pvc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: identityapi-service
+spec:
+  type: ClusterIP
+  selector:
+    app: identityapi
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 8080

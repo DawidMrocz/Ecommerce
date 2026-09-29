@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: productapi-deployment
+  labels:
+    app: productapi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: productapi
+  template:
+    metadata:
+      labels:
+        app: productapi
+    spec:
+      imagePullSecrets:
+        - name: dockerhub-secret
+      containers:
+      - name: productapi
+        image: dawid064/productapi:latest
+        ports:
+        - containerPort: 3000
+        envFrom:
+          - secretRef:
+              name: app-secrets
+          - configMapRef:
+              name: app-config
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: productapi-service
+spec:
+  type: ClusterIP
+  selector:
+    app: productapi
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 8080

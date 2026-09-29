@@ -1,0 +1,104 @@
+version: '3.8'
+
+services:
+  gateway.api:
+    image: ${DOCKER_REGISTRY-}gatewayapi
+    build:
+      context: .
+      dockerfile: Gateway.Api/Dockerfile
+    depends_on:
+      - rabbitmq
+    ports:
+      - "8000:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - Ksef__CertificatePath=${KSEF_CERTIFICATE_PATH}
+      - Ksef__CertificatePassword=${KSEF_CERTIFICATE_PASSWORD}
+
+  cart.api:
+    image: ${DOCKER_REGISTRY-}cartapi
+    build:
+      context: .
+      dockerfile: Cart.Api/Dockerfile
+    depends_on:
+      - rabbitmq
+    ports:
+      - "8001:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__DefaultConnection=${SQL_CONNECTION_STRING}
+      - RabbitMq__Host=rabbitmq
+      - RabbitMq__Username=${RABBITMQ_USER}
+      - RabbitMq__Password=${RABBITMQ_PASSWORD}
+      - JWT__Issuer=Identity.Api
+      - JWT__Audience=Gateway.Api
+      - JWT__PublicKeyPem=${JWT_PUBLIC_KEY_PEM}
+      - Email__Server=${EMAIL_SERVER}
+      - Email__Port=${EMAIL_PORT}
+      - Email__User=${EMAIL_USER}
+      - Email__Password=${EMAIL_PASSWORD}
+      - Email__SSL=${EMAIL_SSL}
+
+  identity.api:
+    image: ${DOCKER_REGISTRY-}identityapi
+    build:
+      context: .
+      dockerfile: Identity.Api/Dockerfile
+    depends_on:
+      - rabbitmq
+    ports:
+      - "8002:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__DefaultConnection=${SQL_CONNECTION_STRING}
+      - JWT__Issuer=Identity.Api
+      - File__SaveFilePath=app/files
+      - JWT__Audience=Gateway.Api
+      - JWT__PublicKeyPem=${JWT_PUBLIC_KEY_PEM}
+      - JWT__PrivateKeyPem=${JWT_PRIVATE_KEY_PEM}
+      - Email__Server=${EMAIL_SERVER}
+      - Email__Port=${EMAIL_PORT}
+      - Email__User=${EMAIL_USER}
+      - Email__Password=${EMAIL_PASSWORD}
+      - Email__SSL=${EMAIL_SSL}
+
+  product.api:
+    image: ${DOCKER_REGISTRY-}productapi
+    build:
+      context: .
+      dockerfile: Product.Api/Dockerfile
+    depends_on:
+      - rabbitmq
+    ports:
+      - "8003:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__DefaultConnection=${SQL_CONNECTION_STRING}
+      - RabbitMq__Host=rabbitmq
+      - RabbitMq__Username=${RABBITMQ_USER}
+      - RabbitMq__Password=${RABBITMQ_PASSWORD}
+      - JWT__Issuer=Identity.Api
+      - JWT__Audience=Gateway.Api
+      - JWT__PublicKeyPem=${JWT_PUBLIC_KEY_PEM}
+      - Email__Server=${EMAIL_SERVER}
+      - Email__Port=${EMAIL_PORT}
+      - Email__User=${EMAIL_USER}
+      - Email__Password=${EMAIL_PASSWORD}
+      - Email__SSL=${EMAIL_SSL}
+
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmqdata:/var/lib/rabbitmq
+    hostname: "rabbitmq"
+
+volumes:
+  rabbitmqdata:

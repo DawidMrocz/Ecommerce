@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gatewayapi-deployment
+  labels:
+    app: gatewayapi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gatewayapi
+  template:
+    metadata:
+      labels:
+        app: gatewayapi
+    spec:
+      imagePullSecrets:
+        - name: dockerhub-secret
+      containers:
+      - name: gatewayapi
+        image: dawid064/gatewayapi:latest
+        ports:
+        - containerPort: 8080   
+        env:
+          - name: ASPNETCORE_URLS
+            value: "http://+:8080"
+          - name: IDENTITY_API_URL
+            value: "http://identityapi-service:3000"
+          - name: CART_API_URL
+            value: "http://cartapi-service:3000"
+          - name: PRODUCT_API_URL
+            value: "http://productapi-service:3000"
+        envFrom:
+          - secretRef:
+              name: app-secrets
+          - configMapRef:
+              name: app-config
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gatewayapi-service
+spec:
+  selector:
+    app: gatewayapi
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080

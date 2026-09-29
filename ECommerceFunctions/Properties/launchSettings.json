@@ -1,0 +1,14 @@
+{
+  "profiles": {
+    "ECommerceFunctions": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7244"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker",
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
+      "httpPort": 34237,
+      "useSSL": false
+    }
+  }
+}
